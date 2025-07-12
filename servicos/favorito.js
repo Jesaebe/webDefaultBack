@@ -1,33 +1,38 @@
-const fs = require("fs");
-const pathFavorito = "favoritos.json";
+const db = require("../db");
 
-function getTodosFavoritos() {
-  return JSON.parse(fs.readFileSync(pathFavorito));
+async function getTodosFavoritos() {
+  return await db.query("SELECT * FROM favoritos");
 }
 
-function getFavoritoPorId(id) {
-  const favoritos = getTodosFavoritos();
-  return favoritos.filter((favorito) => favorito.id == id)[0];
+async function getFavoritoPorId(id) {
+  return await db.query("SELECT * FROM favoritos WHERE id = ?", [id]);
 }
 
-function insereFavorito(body) {
-  const dadosAtuais = getTodosFavoritos();
-  fs.writeFileSync(pathFavorito, JSON.stringify([...dadosAtuais, body]));
+async function insereFavorito(body) {
+  const { nome, autor, ano } = body;
+  const [result] = await db.query(
+    "INSERT INTO favoritos (nome, autor, ano) VALUES (?, ?, ?)",
+    [nome, autor, ano]
+  );
+  return { id: result.insertId, ...body };
+}
+
+async function modificaFavorito(modificacoes, id) {
+  const campos = [],
+    valores = [];
+  for (const [chave, valor] of Object.entries(modificacoes)) {
+    campos.push(`${chave} = ?`);
+    valores.push(valor);
+  }
+  valores.push(id);
+
+  const sql = `UPDATE favoritos SET ${campos.join(', ')} WHERE id = ?`;
+  await db.query(sql, valores);
   return getTodosFavoritos();
 }
 
-function modificaFavorito(modificacoes, id) {
-  let dadosAtuais = getTodosFavoritos();
-  const index = dadosAtuais.findIndex((favorito) => favorito.id == id);
-  dadosAtuais[index] = { ...dadosAtuais[index], ...modificacoes };
-  fs.writeFileSync(pathFavorito, JSON.stringify(dadosAtuais));
-  return getTodosFavoritos();
-}
-
-function removerFavorito(id) {
-  let dadosAtuais = getTodosFavoritos();
-  dadosAtuais = dadosAtuais.filter((favorito) => favorito.id != id);
-  fs.writeFileSync(pathFavorito, JSON.stringify(dadosAtuais));
+async function removerFavorito(id) {
+  await db.query("DELETE FROM favoritos WHERE id = ?", [id]);
   return getTodosFavoritos();
 }
 

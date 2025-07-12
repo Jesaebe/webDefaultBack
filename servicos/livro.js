@@ -1,34 +1,38 @@
-const { log } = require("console");
-const fs = require("fs");
-const pathLivro = "livros.json";
+const db = require("../db.js");
 
-function getTodosLivros() {
-  return JSON.parse(fs.readFileSync(pathLivro));
+async function getTodosLivros() {
+  return await db.query("SELECT * FROM livros");
 }
 
-function getLivroPorId(id) {
-  const livros = getTodosLivros();
-  return livros.filter((livro) => livro.id == id)[0];
+async function getLivroPorId(id) {
+  return await db.query("SELECT * FROM livros WHERE id = ?", [id]);
 }
 
-function insereLivro(body) {
-  const dadosAtuais = getTodosLivros();
-  fs.writeFileSync(pathLivro, JSON.stringify([...dadosAtuais, body]));
+async function insereLivro(body) {
+  const { nome, autor, ano } = body;
+  const [result] = await db.query(
+    "INSERT INTO livros (nome, autor, ano) VALUES (?, ?, ?)",
+    [nome, autor, ano]
+  );
+  return { id: result.insertId, ...body };
+}
+
+async function modificaLivro(modificacoes, id) {
+  const campos = [],
+    valores = [];
+  for (const [chave, valor] of Object.entries(modificacoes)) {
+    campos.push(`${chave} = ?`);
+    valores.push(valor);
+  }
+  valores.push(id);
+
+  const sql = `UPDATE livros SET ${campos.join(', ')} WHERE id = ?`;
+  await db.query(sql, valores);
   return getTodosLivros();
 }
 
-function modificaLivro(modicacoes, id) {
-  let livroAtuais = getTodosLivros();
-  const index = livroAtuais.findIndex((livro) => livro.id == id);
-  livroAtuais[index] = { ...livroAtuais[index], ...modicacoes };
-  fs.writeFileSync(pathLivro, JSON.stringify(livroAtuais));
-  return getTodosLivros();
-}
-
-function removeLivro(id) {
-  let livrosAtuais = getTodosLivros();
-  livrosAtuais = livrosAtuais.filter((livro) => livro.id != id);
-  fs.writeFileSync(pathLivro, JSON.stringify(livrosAtuais));
+async function removeLivro(id) {
+  await db.query(`DELETE FROM livros WHERE id = ?`, [id]);
   return getTodosLivros();
 }
 
