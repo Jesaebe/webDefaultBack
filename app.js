@@ -1,11 +1,18 @@
 const express = require("express");
+const rotaLivro = require("./rotas/livro");
+const rotaFavorito = require("./rotas/favorito");
+
+const cors = require("cors");
+
 const app = express();
 app.use(express.json());
-const port = 8001;
-const rotaLivro = require("./rotas/livro");
+app.use(cors({origin: "*"}));
+
+app.use("/livros", rotaLivro);
+app.use("/favoritos", rotaFavorito);
+
+const port = 8000;
 
 app.listen(port, () => {
   console.log(`Escutando a porta ${port}`);
-});
-
-app.use("/livros", rotaLivro);
+}); 

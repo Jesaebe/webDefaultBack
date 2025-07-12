@@ -5,3 +5,5 @@ node app.js
 npm install nodemon -g
 
 nodemon app.js
+
+npm install cors
