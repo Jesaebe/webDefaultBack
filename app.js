@@ -1,8 +1,7 @@
-const express = require("express");
-const rotaLivro = require("./rotas/livro");
-const rotaFavorito = require("./rotas/favorito");
-
-const cors = require("cors");
+import express from "express";
+import rotaLivro from "./rotas/livro.js";
+import rotaFavorito from "./rotas/favorito.js";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());

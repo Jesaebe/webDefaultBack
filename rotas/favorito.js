@@ -1,11 +1,11 @@
-const { Router } = require("express");
-const {
+import { Router } from "express";
+import {
   getFavoritos,
   getFavorito,
   postFavorito,
   patchFavorito,
   deleteFavorito,
-} = require("../controladores/favorito");
+} from "../controladores/favorito.js";
 const router = Router();
 
 router.get("/", getFavoritos);
@@ -18,4 +18,4 @@ router.patch("/:id", patchFavorito);
 
 router.delete("/:id", deleteFavorito);
 
-module.exports = router;
+export default router;

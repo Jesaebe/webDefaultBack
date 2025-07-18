@@ -1,10 +1,10 @@
-const {
+import {
   getTodosFavoritos,
   getFavoritoPorId,
   insereFavorito,
   modificaFavorito,
   removerFavorito,
-} = require("../servicos/favorito");
+} from "../servicos/favorito.js";
 
 async function getFavoritos(req, res) {
   try {
@@ -71,7 +71,7 @@ async function deleteFavorito(req, res) {
   }
 }
 
-module.exports = {
+export {
   getFavoritos,
   getFavorito,
   insereFavorito,

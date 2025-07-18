@@ -1,4 +1,4 @@
-const db = require("../db.js");
+import db from "../db.js";
 
 async function getTodosLivros() {
   return await db.query("SELECT * FROM livros");
@@ -36,7 +36,7 @@ async function removeLivro(id) {
   return getTodosLivros();
 }
 
-module.exports = {
+export {
   getTodosLivros,
   getLivroPorId,
   insereLivro,

@@ -1,10 +1,10 @@
-const {
+import {
   getTodosLivros,
   getLivroPorId,
   insereLivro,
   modificaLivro,
   removeLivro,
-} = require("../servicos/livro");
+} from "../servicos/livro.js";
 
 async function getLivros(req, res) {
   try {
@@ -71,7 +71,7 @@ async function deleteLivro(req, res) {
   }
 }
 
-module.exports = {
+export {
   getLivros,
   getLivro,
   postLivro,

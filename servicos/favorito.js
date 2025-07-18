@@ -1,4 +1,4 @@
-const db = require("../db");
+import db from "../db.js";
 
 async function getTodosFavoritos() {
   return await db.query("SELECT * FROM favoritos");
@@ -36,7 +36,7 @@ async function removerFavorito(id) {
   return getTodosFavoritos();
 }
 
-module.exports = {
+export {
   getTodosFavoritos,
   getFavoritoPorId,
   insereFavorito,
