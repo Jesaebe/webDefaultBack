@@ -1,11 +1,11 @@
-const { Router } = require("express");
-const {
+import { Router } from "express";
+import {
   getLivros,
   getLivro,
   postLivro,
   patchLivro,
   deleteLivro,
-} = require("../controladores/livro");
+} from "../controladores/livro.js";
 const router = Router();
 
 router.get("/", getLivros);
@@ -18,4 +18,4 @@ router.patch("/:id", patchLivro);
 
 router.delete("/:id", deleteLivro);
 
-module.exports = router;
+export default router;

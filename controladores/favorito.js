@@ -1,88 +1,74 @@
-const {
+import mongoose from "mongoose";
+import {
   getTodosFavoritos,
   getFavoritoPorId,
   insereFavorito,
   modificaFavorito,
   removerFavorito,
-} = require("../servicos/favorito");
+} from "../servicos/favorito.js";
 
-function getFavoritos(req, res) {
+async function getFavoritos(req, res) {
   try {
-    res.send(getTodosFavoritos());
+    res.send(await getTodosFavoritos());
   } catch (e) {
-    res.status(200);
-    res.send(`CONTROLLER: ${e.message}`);
+    res.status(500).send(`CONTROLLER: ${e.message}`);
   }
 }
 
-function getFavorito(req, res) {
+async function getFavorito(req, res) {
   try {
     const favoritoId = req.params.id;
-    if (favoritoId && Number(favoritoId)) {
-      res.send(getFavoritoPorId(favoritoId));
+    if (favoritoId && mongoose.Types.ObjectId.isValid(favoritoId)) {
+      res.send(await getFavoritoPorId(favoritoId));
     } else {
-      res.status(422);
-      res.send("ID inválido");
+      res.status(422).send("ID inválido");
     }
   } catch (e) {
-    res.status(500);
-    res.send(`CONTROLLER: ${e.message}`);
+    res.status(500).send(`CONTROLLER: ${e.message}`);
   }
 }
 
-function postFavorito(req, res) {
+async function postFavorito(req, res) {
   try {
     const favoritoNovo = req.body;
     if (favoritoNovo.nome) {
-      const todosFavoritos = insereFavorito(favoritoNovo);
-      res.status(201);
-      res.send(todosFavoritos);
+      res.status(201).send(await insereFavorito(favoritoNovo));
     } else {
-      res.status(422);
-      res.send("O campo nome é obrigatório");
+      res.status(422).send("O campo nome é obrigatório");
     }
   } catch (e) {
-    res.status(500);
-    res.send(`CONTROLLER: ${e.message}`);
+    res.status(500).send(`CONTROLLER: ${e.message}`);
   }
 }
 
-function patchFavorito(req, res) {
+async function patchFavorito(req, res) {
   try {
     const favoritoId = req.params.id;
-    if (favoritoId && Number(favoritoId)) {
-      const favoritoModificado = req.body;
-      const todosFavoritos = modificaFavorito(favoritoModificado, favoritoId);
-      res.status(200);
-      res.send(todosFavoritos);
+    const favoritoModificado = req.body;
+    if (favoritoId && mongoose.Types.ObjectId.isValid(favoritoId) && favoritoModificado) {
+      res.status(200).send(await modificaFavorito(favoritoModificado, favoritoId));
     } else {
-      res.status(422);
-      res.send("ID inválido");
+      res.status(422).send("ID inválido");
     }
   } catch (e) {
-    res.status(500);
-    res.send(`CONTROLLER: ${e.message}`);
+    res.status(500).send(`CONTROLLER: ${e.message}`);
   }
 }
 
-function deleteFavorito(req, res) {
+async function deleteFavorito(req, res) {
   try {
-    const favoritoId = req.params.id;
-    if (favoritoId && Number(favoritoId)) {
-      const todosFavoritos = removerFavorito(favoritoId);
-      res.status(200);
-      res.send(todosFavoritos);
+    const favoritoId = req.params.id;    
+    if (favoritoId && mongoose.Types.ObjectId.isValid(favoritoId)) {
+      res.send(await removerFavorito(favoritoId));
     } else {
-      res.status(422);
-      res.send("ID inválido");
+      res.status(422).send("ID inválido");
     }
   } catch (e) {
-    res.status(500);
-    res.send(`CONTROLLER: ${e.message}`);
+    res.status(500).send(`CONTROLLER: ${e.message}`);
   }
 }
 
-module.exports = {
+export {
   getFavoritos,
   getFavorito,
   insereFavorito,

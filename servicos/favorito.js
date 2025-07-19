@@ -1,37 +1,29 @@
-const fs = require("fs");
-const pathFavorito = "favoritos.json";
+import favorito from "../models/Favoritos.js";
 
-function getTodosFavoritos() {
-  return JSON.parse(fs.readFileSync(pathFavorito));
+async function getTodosFavoritos() {
+  return await favorito.find({});
 }
 
-function getFavoritoPorId(id) {
-  const favoritos = getTodosFavoritos();
-  return favoritos.filter((favorito) => favorito.id == id)[0];
+async function getFavoritoPorId(id) {
+  return await favorito.findById(id);
 }
 
-function insereFavorito(body) {
-  const dadosAtuais = getTodosFavoritos();
-  fs.writeFileSync(pathFavorito, JSON.stringify([...dadosAtuais, body]));
-  return getTodosFavoritos();
+async function insereFavorito(body) {
+  await favorito.create(body);
+  return await getTodosFavoritos();
 }
 
-function modificaFavorito(modificacoes, id) {
-  let dadosAtuais = getTodosFavoritos();
-  const index = dadosAtuais.findIndex((favorito) => favorito.id == id);
-  dadosAtuais[index] = { ...dadosAtuais[index], ...modificacoes };
-  fs.writeFileSync(pathFavorito, JSON.stringify(dadosAtuais));
-  return getTodosFavoritos();
+async function modificaFavorito(modificacoes, id) {
+  await favorito.findByIdAndUpdate(id, modificacoes);
+  return await getTodosFavoritos();
 }
 
-function removerFavorito(id) {
-  let dadosAtuais = getTodosFavoritos();
-  dadosAtuais = dadosAtuais.filter((favorito) => favorito.id != id);
-  fs.writeFileSync(pathFavorito, JSON.stringify(dadosAtuais));
-  return getTodosFavoritos();
+async function removerFavorito(id) {
+  await favorito.findByIdAndDelete(id);
+  return await getTodosFavoritos();
 }
 
-module.exports = {
+export {
   getTodosFavoritos,
   getFavoritoPorId,
   insereFavorito,

@@ -1,8 +1,9 @@
-const express = require("express");
-const rotaLivro = require("./rotas/livro");
-const rotaFavorito = require("./rotas/favorito");
+import express from "express";
+import rotaLivro from "./rotas/livro.js";
+import rotaFavorito from "./rotas/favorito.js";
+import cors from "cors";
+import connectDB from "./config/dbConnect.js";
 
-const cors = require("cors");
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,15 @@ app.use("/livros", rotaLivro);
 app.use("/favoritos", rotaFavorito);
 
 const port = 8000;
+
+const conexao = await connectDB();
+conexao.on("error", (erro) => {
+  console.log("Erro de conexão:", erro);  
+})
+
+conexao.once("open", () => {  
+  console.log("Conexão com o banco feita com sucesso");  
+})
 
 app.listen(port, () => {
   console.log(`Escutando a porta ${port}`);
