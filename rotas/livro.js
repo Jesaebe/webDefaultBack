@@ -5,10 +5,13 @@ import {
   postLivro,
   patchLivro,
   deleteLivro,
+  getLivroPorEditora,
 } from "../controladores/livro.js";
 const router = Router();
 
 router.get("/", getLivros);
+
+router.get("/buscar", getLivroPorEditora);
 
 router.get("/:id", getLivro);
 

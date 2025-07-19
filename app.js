@@ -1,8 +1,10 @@
 import express from "express";
 import rotaLivro from "./rotas/livro.js";
 import rotaFavorito from "./rotas/favorito.js";
+import rotaAutores from "./rotas/autor.js";
 import cors from "cors";
 import connectDB from "./config/dbConnect.js";
+import "dotenv/config";
 
 
 const app = express();
@@ -11,6 +13,7 @@ app.use(cors({origin: "*"}));
 
 app.use("/livros", rotaLivro);
 app.use("/favoritos", rotaFavorito);
+app.use("/autores", rotaAutores);
 
 const port = 8000;
 

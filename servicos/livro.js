@@ -8,6 +8,10 @@ async function getLivroPorId(id) {
   return await livros.findById(id);
 }
 
+async function listarLivrosPorEditora(editora) {
+  return await livros.find({editora: editora})
+}
+
 async function insereLivro(body) {  
   await livros.create(body);
   return await getTodosLivros();
@@ -26,6 +30,7 @@ async function removeLivro(id) {
 export {
   getTodosLivros,
   getLivroPorId,
+  listarLivrosPorEditora,
   insereLivro,
   modificaLivro,
   removeLivro,

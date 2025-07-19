@@ -5,13 +5,17 @@ import {
   insereLivro,
   modificaLivro,
   removeLivro,
+  listarLivrosPorEditora,
 } from "../servicos/livro.js";
+
+import { getAutorPorId } from "../servicos/autor.js";
+
 
 async function getLivros(req, res) {
   try {  
     res.send(await getTodosLivros());
   } catch (e) {
-    res.status(500).send(error.message);
+    res.status(500).send(e.message);
   }
 }
 
@@ -24,7 +28,16 @@ async function getLivro(req, res) {
       res.status(422).send("ID inválido");
     }
   } catch (e) {
-    res.status(500).send(error.message);
+    res.status(500).send(e.message);
+  }
+}
+
+async function getLivroPorEditora(req, res) {
+  const editora = req.query.editora;  
+  try {
+    res.send(await listarLivrosPorEditora(editora));
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 }
 
@@ -32,7 +45,10 @@ async function postLivro(req, res) {
   try {
     const livroNovo = req.body;
     if (livroNovo.nome) {
-      res.status(201).send(await insereLivro(livroNovo));
+      
+      const autorEncontrado = await getAutorPorId(livroNovo.autor);
+      const livroCompleto = {...livroNovo, autor: { ...autorEncontrado._doc}}
+      res.status(201).send(await insereLivro(livroCompleto));
     } else {
       res.status(422).send("O campo nome é obrigatório");
     }
@@ -71,6 +87,7 @@ async function deleteLivro(req, res) {
 export {
   getLivros,
   getLivro,
+  getLivroPorEditora,
   postLivro,
   patchLivro,
   deleteLivro,

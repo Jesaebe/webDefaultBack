@@ -1,2 +1,3 @@
 conexaoMongo.js
 node_modules
+.env
