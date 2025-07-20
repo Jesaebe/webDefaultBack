@@ -1,17 +1,30 @@
+import { getAutorByNome } from "../servicos/autor.js";
 import {
   getTodosLivros,
   getLivroPorId,
   insereLivro,
   modificaLivro,
   removeLivro,
+  getLivroByNome,
 } from "../servicos/livro.js";
+
 
 async function getLivros(req, res) {
   try {
     const livros = await getTodosLivros();
     res.send(livros[0]);
   } catch (e) {
-    res.status(500).send(error.message);
+    res.status(500).send(e.message);
+  }
+}
+
+async function getLivrosPorNome(req, res) {
+  const nomeLivro = req.query.nome;
+  try {
+    const livros = await getLivroByNome(nomeLivro);
+    res.send(livros[0]);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 }
 
@@ -28,14 +41,15 @@ async function getLivro(req, res) {
       res.status(422).send("ID inválido");
     }
   } catch (e) {
-    res.status(500).send(error.message);
+    res.status(500).send(e.message);
   }
 }
 
 async function postLivro(req, res) {
   try {
-    const livroNovo = req.body;
-    const livroCriado = await insereLivro(livroNovo);
+    const livroNovo = req.body;   
+    const idAutor = await getAutorByNome(livroNovo.autor);    
+    const livroCriado = await insereLivro({...livroNovo, autor: idAutor[0][0].id});
     res.status(201).send(livroCriado);
   } catch (e) {
     res.status(500).send(e.message);
@@ -74,6 +88,7 @@ async function deleteLivro(req, res) {
 export {
   getLivros,
   getLivro,
+  getLivrosPorNome,
   postLivro,
   patchLivro,
   deleteLivro,

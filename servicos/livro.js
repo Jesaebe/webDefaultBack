@@ -4,14 +4,18 @@ async function getTodosLivros() {
   return await db.query("SELECT * FROM livros");
 }
 
+async function getLivroByNome(nome) {
+  return await db.query("SELECT * FROM livros WHERE LOWER(nome) LIKE LOWER(?)", [`%${nome}%`]);
+}
+
 async function getLivroPorId(id) {
   return await db.query("SELECT * FROM livros WHERE id = ?", [id]);
 }
 
 async function insereLivro(body) {
-  const { nome, autor, ano } = body;
+  const { nome, autor, ano } = body;  
   const [result] = await db.query(
-    "INSERT INTO livros (nome, autor, ano) VALUES (?, ?, ?)",
+    "INSERT INTO livros (nome, aut_id, ano) VALUES (?, ?, ?)",
     [nome, autor, ano]
   );
   return { id: result.insertId, ...body };
@@ -38,6 +42,7 @@ async function removeLivro(id) {
 
 export {
   getTodosLivros,
+  getLivroByNome,
   getLivroPorId,
   insereLivro,
   modificaLivro,
